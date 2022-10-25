@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+  </head>
+
+  <script>
+    function editProfile() {
+      document.querySelector(".container-edit").style.display = "block";
+      document.querySelector(".container").style.display = "none";
+
+      const name = document.querySelector("#name").textContent;
+      document.querySelector("#input-name").value = name;
+
+      const email = document.querySelector("#email").textContent;
+      document.querySelector("#input-email").value = email;
+
+      const interests = document.querySelector("#interests").textContent;
+      document.querySelector("#input-interests").value = interests;
+    }
+    function getProfile() {
+      console.log("Get Profile");
+      var requestOptions = {
+        method: "GET",
+        redirect: "follow",
+      };
+
+      fetch("http://localhost:3000/get-profile", requestOptions)
+        .then((response) => response.text())
+        .then((result) => {
+          let user = JSON.parse(result);
+          document.querySelector("#name").textContent = user.name;
+          document.querySelector("#email").textContent = user.email;
+          document.querySelector("#interests").textContent = user.interests;
+        })
+        .catch((error) => console.log("error", error));
+    }
+
+    function saveProfile() {
+      let name = document.querySelector("#input-name").value;
+      let email = document.querySelector("#input-email").value;
+      let interests = document.querySelector("#input-interests").value;
+
+      document.querySelector("#name").textContent = name;
+
+      document.querySelector("#email").textContent = email;
+
+      document.querySelector("#interests").textContent = interests;
+
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      var raw = JSON.stringify({
+        name: name,
+        email: email,
+        interests: interests,
+      });
+
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+
+      fetch("http://localhost:3000/update-profile", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.log("error", error));
+
+      document.querySelector(".container").style.display = "block";
+      document.querySelector(".container-edit").style.display = "none";
+    }
+  </script>
+
+  <body>
+    <div class="container" id="container">
+      <h1 id="header">User Profile</h1>
+      <img src="profile-picture" />
+      <hr />
+      Name:
+      <h3 id="name"></h3>
+      <hr />
+      Email:
+      <h3 id="email"></h3>
+      <hr />
+      Interests:
+      <h3 id="interests"></h3>
+      <hr />
+      <button class="button" onclick="editProfile()">Edit Profile</button>
+    </div>
+    <div class="container-edit" style="display: none">
+      <h1 id="header">User Profile</h1>
+      <img src="profile-picture" />
+      <hr />
+      Name: <input type="text" id="input-name" />
+      <hr />
+      Email: <input type="email" id="input-email" />
+      <hr />
+      Interests: <input type="text" id="input-interests" />
+      <hr />
+      <button class="button" onclick="saveProfile()">Save Profile</button>
+    </div>
+    <script defer>
+      getProfile();
+    </script>
+  </body>
+</html>
